@@ -1,5 +1,5 @@
-const express = require("express");
 
-const app = express();
+require('./server');
 
-app.listen(8000, () => console.log('Application Started For Development'));
+console.log('Application started');
+
