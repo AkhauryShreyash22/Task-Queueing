@@ -1,6 +1,9 @@
 const cluster = require('node:cluster');
 const express = require("express");
 require("dotenv").config();
+const YAML = require('yamljs');
+const swaggerUi = require('swagger-ui-express');
+
 
 var config = process.env;
 
@@ -19,6 +22,9 @@ if (cluster.isMaster) {
 } else {
     const app = express();
 
+    const router = require('./routes.js');
+
+
     app.get('/', (req, res) => {
         res.send(`Hello from worker ${process.pid}`);
     });
@@ -26,4 +32,13 @@ if (cluster.isMaster) {
     app.listen(3000, () => {
         console.log(`Worker ${process.pid} started`);
     });
+
+
+    app.use(express.json({extended: false}));
+  
+    app.use("/api/v1", router);
+
+    const swaggerDocument = YAML.load('./openapi_apis.yaml');
+
+    app.use('/openapi/app', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 }
