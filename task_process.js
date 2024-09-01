@@ -7,8 +7,10 @@ require("dotenv").config();
 
 const config = process.env;
 
+var file_path = config.file_path;
 
-const taskQueue = new Bull('taskQueue', { redis: { port: 6379, host: '127.0.0.1' } });
+
+const taskQueue = new Bull('taskQueue', { redis: { port: config.redis_port, host: config.redis_host } });
 const redis = new Redis({ port: config.redis_port, host: config.redis_host });
 
 
@@ -19,7 +21,7 @@ async function task(user_id) {
     var formattedDate = now.toLocaleString();
     var logtxt = user_id +" - task completed at " + formattedDate +"\n";
     console.log(logtxt);
-    fs.appendFile('./log.txt', logtxt, (err) => {
+    fs.appendFile("./file_path", logtxt, (err) => {
         if (err) {
             console.error('Error writing to log file:', err);
         }
